@@ -11,6 +11,7 @@ describe('meta/MetaDecorator', () => {
 
         class Type1 {}
         class Type2 {}
+        class Type3 {}
 
         function checkMetaTypes(Class, expectedTypes) {
             expect(Class.__cubekitMeta__.constructor.types).to.eql(expectedTypes)
@@ -35,18 +36,6 @@ describe('meta/MetaDecorator', () => {
             checkMetaTypes(Test, [Type1, Type2])
         })
 
-        it('must merge types from the parent class', function() {
-            const { meta } = this
-
-            @meta.types(Type1)
-            class ParentClass {}
-
-            @meta.types(Type2)
-            class ChildClass extends ParentClass {}
-
-            checkMetaTypes(ChildClass, [Type1, Type2])
-        })
-
         it('must not change types in the parent class', function() {
             const { meta } = this
 
@@ -57,6 +46,35 @@ describe('meta/MetaDecorator', () => {
             class ChildClass extends ParentClass {}
 
             checkMetaTypes(ParentClass, [Type1])
+        })
+
+        it('must not take types from the parent class', function() {
+            const { meta } = this
+
+            @meta.types(Type1)
+            class ParentClass {}
+
+            @meta.types(Type2)
+            class ChildClass extends ParentClass {}
+
+            checkMetaTypes(ChildClass, [Type2])
+        })
+
+        it('two inherited classes must not conflict', function() {
+            const { meta } = this
+
+            @meta.singleton()
+            class ParentClass {}
+
+            @meta.types(Type2)
+            class ChildClass1 extends ParentClass {}
+
+            @meta.types(Type3)
+            class ChildClass2 extends ParentClass {}
+
+            checkMetaTypes(ParentClass, [])
+            checkMetaTypes(ChildClass1, [Type2])
+            checkMetaTypes(ChildClass2, [Type3])
         })
     })
 
