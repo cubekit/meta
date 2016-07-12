@@ -25,9 +25,6 @@ module.exports = function (config) {
             reporters: [
                 { type: 'text' },
             ],
-            instrumenterOptions: {
-                istanbul: { noCompact: true }
-            }
         },
         webpack: {
             devtool: 'inline-source-map',
@@ -36,10 +33,6 @@ module.exports = function (config) {
                     test: /\.(js|jsx)$/,
                     include: /ioc\/(src|tests)/,
                     loader: 'eslint-loader',
-                }, {
-                    test: /\.js$/,
-                    include: /src/,
-                    loader: 'isparta',
                 }],
 
                 loaders: [{
